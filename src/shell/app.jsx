@@ -1,82 +1,61 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import Card from 'react-bootstrap/Card';
 
 import { Outlet, RouterProvider, Link, Router, Route, RootRoute } from '@tanstack/react-router';
+import { lazy } from 'react';
 
-const Navigation = () => {
-  return (
-    <Navbar>
-      <Container>
-        <Navbar.Collapse>
-          <Nav>
-            <Nav.Link as={Link} to="/">
-              Home
-            </Nav.Link>
-            <Nav.Link as={Link} to="/shop">
-              Shop
-            </Nav.Link>
-            <Nav.Link as={Link} to="/blog">
-              Blog
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-  );
-};
-
-function Root() {
-  return (
+const Navigation = () => (
+  <Navbar>
     <Container>
-      <Navigation />
-
-      <Outlet />
+      <Navbar.Collapse>
+        <Nav>
+          <Nav.Link as={Link} to="/">
+            Home
+          </Nav.Link>
+          <Nav.Link as={Link} to="/shop">
+            Shop
+          </Nav.Link>
+          <Nav.Link as={Link} to="/blog">
+            Blog
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
     </Container>
-  );
-}
+  </Navbar>
+);
 
-const root = new RootRoute({
-  component: Root,
-});
+const Root = () => (
+  <Container>
+    <Navigation />
 
-const Index = () => {
-  return <Card className="p-3">Hello App</Card>;
-};
+    <Outlet />
+  </Container>
+);
 
-const Shop = () => {
-  return <Card className="p-3">Shop</Card>;
-};
+const root = new RootRoute({ component: Root });
 
-const Blog = () => {
-  return <Card className="p-3">Blog</Card>;
-};
-
-// Create the router using your route tree
 const router = new Router({
   routeTree: root.addChildren([
     new Route({
-      getParentRoute: () => root,
       path: '/',
-      component: Index,
+      component: lazy(() => import('./home')),
+      getParentRoute: () => root,
     }),
 
     new Route({
-      getParentRoute: () => root,
       path: '/shop',
-      component: Shop,
+      component: lazy(() => import('./shop')),
+      getParentRoute: () => root,
     }),
 
     new Route({
-      getParentRoute: () => root,
       path: '/blog',
-      component: Blog,
+      component: lazy(() => import('./blog')),
+      getParentRoute: () => root,
     }),
   ]),
 });
-
-// Create an index route
 
 const App = () => <RouterProvider router={router} />;
 

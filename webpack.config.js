@@ -10,13 +10,14 @@ export default {
   entry: './src/shell/index.js',
   output: {
     path: path.resolve(process.cwd(), './public/dist'),
-    filename: 'bundle.js',
+    filename: (pathdata) => (pathdata.chunk.name === 'main' ? 'bundle.js' : '[name].js'),
   },
   resolve: {
     extensions: ['.js', '.jsx'],
   },
   devtool: 'source-map',
   devServer: {
+    historyApiFallback: true,
     compress: true,
     port: 9000,
   },
@@ -50,5 +51,8 @@ export default {
         ],
       },
     ],
+  },
+  optimization: {
+    runtimeChunk: 'single',
   },
 };
