@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "name": "microfrontends-runtime-shop",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite dev --port 9002 --host 0.0.0.0 -c -c vite.app.config.js",
+    "build": "vite build -c -c vite.app.config.js"
+  },
+  "author": "\"Yury Solovyov\"",
+  "license": "MIT",
+  "dependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "bootstrap": "^5.3.2",
+    "minimist": "^1.2.8",
+    "react-bootstrap": "^2.9.1",
+    "vite": "4.5.0"
+  }
+}

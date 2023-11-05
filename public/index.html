@@ -3,9 +3,19 @@
   <head>
     <meta charset="UTF-8">
     <title>Shell</title>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "react/jsx-runtime": "/jsx-runtime.js",
+          "react": "/react.js",
+          "react-dom":"/react-dom.js"
+        }
+      }
+    </script>
+
     <link rel="stylesheet" href="/style.css" />
-    <script type="module" src="/runtime.js"></script>
-    <script type="module" src="/bundle.js"></script>
+    <script type="module" src="/index.js"></script>
   </head>
   <body>
     <div id="root"></div>

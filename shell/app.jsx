@@ -1,9 +1,10 @@
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
+import React from 'react';
+import { Container, Nav, Navbar, Card } from 'react-bootstrap';
 
 import { Outlet, RouterProvider, Link, Router, Route, RootRoute } from '@tanstack/react-router';
 import { lazy } from 'react';
+
+import Deferred from './deferred.jsx';
 
 const Navigation = () => (
   <Navbar>
@@ -33,27 +34,46 @@ const Root = () => (
   </Container>
 );
 
+const apps = [
+  {
+    name: 'blog',
+    path: '/blog',
+    script: 'http://localhost:9001/dist/app.js',
+  },
+  {
+    name: 'shop',
+    path: '/shop',
+    script: 'http://localhost:9002/dist/app.js',
+  },
+];
+
+const Home = () => {
+  return (
+    <>
+      <Card className="p-3">Hello App</Card>
+      <Deferred value="hello" />
+    </>
+  );
+};
+
 const root = new RootRoute({ component: Root });
 
 const router = new Router({
   routeTree: root.addChildren([
     new Route({
       path: '/',
-      component: lazy(() => import('./home')),
+      component: Home,
       getParentRoute: () => root,
     }),
 
-    new Route({
-      path: '/shop',
-      component: lazy(() => import('./shop')),
-      getParentRoute: () => root,
-    }),
-
-    new Route({
-      path: '/blog',
-      component: lazy(() => import('./blog')),
-      getParentRoute: () => root,
-    }),
+    ...apps.map(
+      (app) =>
+        new Route({
+          path: app.path,
+          component: lazy(() => import(/* @vite-ignore */ app.script)),
+          getParentRoute: () => root,
+        }),
+    ),
   ]),
 });
 
