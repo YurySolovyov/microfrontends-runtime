@@ -11,6 +11,8 @@ services:
       - ./public:/public
 
   shell:
+    environment:
+      NODE_ENV: 'development'
     build:
       dockerfile: ../Dockerfile
       context: ./shell

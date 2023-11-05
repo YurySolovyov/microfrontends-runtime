@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { Container, Nav, Navbar, Card } from 'react-bootstrap';
 
 import { Outlet, RouterProvider, Link, Router, Route, RootRoute } from '@tanstack/react-router';
-import { lazy } from 'react';
 
 import Deferred from './deferred.jsx';
 
@@ -49,10 +48,13 @@ const apps = [
 
 const Home = () => {
   return (
-    <>
+    <div>
       <Card className="p-3">Hello App</Card>
-      <Deferred value="hello" />
-    </>
+
+      <Card className="mt-3 p-3">
+        <Deferred value="hello" />
+      </Card>
+    </div>
   );
 };
 

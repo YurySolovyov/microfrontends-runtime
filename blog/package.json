@@ -8,7 +8,7 @@
     "dev": "vite dev --port 9001 --host 0.0.0.0 -c vite.app.config.js",
     "build": "vite build -c -c vite.app.config.js"
   },
-  "author": "\"Yury Solovyov\"",
+  "author": "Yury Solovyov",
   "license": "MIT",
   "dependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",

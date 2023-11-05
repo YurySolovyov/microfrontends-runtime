@@ -1,7 +1,22 @@
-const React = await import('react');
+const name = 're' + `a${'c'}t`;
+
+const React = await import(name);
+const { useEffect, useState } = React;
 
 const Deferred = ({ value }) => {
-  return <div>I'm deferred: {value}</div>;
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const tick = setInterval(() => setCount((curr) => curr + 1), 1000);
+
+    return () => clearInterval(tick);
+  }, []);
+
+  return (
+    <div>
+      I'm deferred: {value}, count: {count}
+    </div>
+  );
 };
 
 export default Deferred;

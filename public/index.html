@@ -1,23 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Shell</title>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Shell</title>
+        <link rel="preload" href="vendor.js" as="script" crossorigin />
 
-    <script type="importmap">
-      {
-        "imports": {
-          "react/jsx-runtime": "/jsx-runtime.js",
-          "react": "/react.js",
-          "react-dom":"/react-dom.js"
-        }
-      }
-    </script>
+        <script type="importmap">
+            {
+                "imports": {
+                    "react/jsx-runtime": "/jsx-runtime.js",
+                    "react": "/react.js",
+                    "react-dom/client": "/dom-client.js",
+                    "react-dom": "/react-dom.js"
+                }
+            }
+        </script>
 
-    <link rel="stylesheet" href="/style.css" />
-    <script type="module" src="/index.js"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+        <link rel="stylesheet" href="/style.css" />
+        <script type="module" src="/index.js"></script>
+    </head>
+    <body>
+        <div id="root"></div>
+    </body>
 </html>
