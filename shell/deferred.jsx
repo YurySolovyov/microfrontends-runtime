@@ -1,7 +1,4 @@
-const name = 're' + `a${'c'}t`;
-
-const React = await import(name);
-const { useEffect, useState } = React;
+import { useEffect, useState } from 'react';
 
 const Deferred = ({ value }) => {
   const [count, setCount] = useState(0);

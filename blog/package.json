@@ -5,16 +5,17 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "vite dev --port 9001 --host 0.0.0.0 -c vite.app.config.js",
-    "build": "vite build -c -c vite.app.config.js"
+    "start": "vite build --watch",
+    "build": "vite build"
   },
   "author": "Yury Solovyov",
   "license": "MIT",
   "dependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@vitejs/plugin-react-swc": "^3.7.0",
     "bootstrap": "^5.3.2",
     "minimist": "^1.2.8",
-    "react-bootstrap": "^2.9.1",
-    "vite": "4.5.0"
+    "react-bootstrap": "^2.10.4",
+    "vite": "^5.3.5"
   }
 }

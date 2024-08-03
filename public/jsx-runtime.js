@@ -1,5 +1,5 @@
-import { JSXRuntime } from './vendor.js';
+import { jsxRuntimeExports } from './vendor.js';
 
-const { Fragment, jsx, jsxs } = JSXRuntime;
+const { Fragment, jsx, jsxs } = jsxRuntimeExports;
 
 export { Fragment, jsx, jsxs };

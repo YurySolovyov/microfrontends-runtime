@@ -1,7 +1,7 @@
-import React, { lazy } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Container, Nav, Navbar, Card } from 'react-bootstrap';
 
-import { Outlet, RouterProvider, Link, Router, Route, RootRoute } from '@tanstack/react-router';
+import { createBrowserRouter, RouterProvider, Outlet, Link } from 'react-router-dom';
 
 import Deferred from './deferred.jsx';
 
@@ -26,23 +26,25 @@ const Navigation = () => (
 );
 
 const Root = () => (
-  <Container>
-    <Navigation />
+  <React.StrictMode>
+    <Container>
+      <Navigation />
 
-    <Outlet />
-  </Container>
+      <Outlet />
+    </Container>
+  </React.StrictMode>
 );
 
 const apps = [
   {
     name: 'blog',
     path: '/blog',
-    script: 'http://localhost:9001/dist/app.js',
+    script: 'http://localhost:9001/blog/index.js',
   },
   {
     name: 'shop',
     path: '/shop',
-    script: 'http://localhost:9002/dist/app.js',
+    script: 'http://localhost:9002/shop/index.js',
   },
 ];
 
@@ -58,26 +60,32 @@ const Home = () => {
   );
 };
 
-const root = new RootRoute({ component: Root });
+const router = createBrowserRouter([
+  {
+    element: <Root />,
+    path: '/',
 
-const router = new Router({
-  routeTree: root.addChildren([
-    new Route({
-      path: '/',
-      component: Home,
-      getParentRoute: () => root,
-    }),
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
 
-    ...apps.map(
-      (app) =>
-        new Route({
+      ...apps.map((app) => {
+        const Component = lazy(() => import(app.script));
+
+        return {
           path: app.path,
-          component: lazy(() => import(/* @vite-ignore */ app.script)),
-          getParentRoute: () => root,
-        }),
-    ),
-  ]),
-});
+          element: (
+            <Suspense fallback={<p>Loading... {app.name}</p>}>
+              <Component />
+            </Suspense>
+          ),
+        };
+      }),
+    ],
+  },
+]);
 
 const App = () => <RouterProvider router={router} />;
 

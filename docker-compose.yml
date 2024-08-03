@@ -8,11 +8,13 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - static:/static
+      - apps:/apps
       - ./public:/public
 
   shell:
     environment:
       NODE_ENV: 'development'
+    command: yarn start
     build:
       dockerfile: ../Dockerfile
       context: ./shell
@@ -21,16 +23,31 @@ services:
       - static:/static
 
   blog:
-    image: node:20.9.0-alpine3.18
+    environment:
+      NODE_ENV: 'development'
+      APP_NAME: 'blog'
+    command: yarn start
+    build:
+      dockerfile: ../Dockerfile
+      context: ./blog
     volumes:
       - ./blog:/app
       - static:/static
+      - apps:/apps
 
   shop:
-    image: node:20.9.0-alpine3.18
+    environment:
+      NODE_ENV: 'development'
+      APP_NAME: 'shop'
+    command: yarn start
+    build:
+      dockerfile: ../Dockerfile
+      context: ./shop
     volumes:
       - ./shop:/app
       - static:/static
+      - apps:/apps
 
 volumes:
   static:
+  apps:
