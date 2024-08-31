@@ -11,6 +11,17 @@ services:
       - apps:/apps
       - ./public:/public
 
+  runtime:
+    environment:
+      NODE_ENV: 'development'
+    build:
+      dockerfile: ../Dockerfile
+      context: ./shell
+    command: yarn start
+    volumes:
+      - ./runtime:/app
+      - static:/static
+
   shell:
     environment:
       NODE_ENV: 'development'
@@ -18,6 +29,9 @@ services:
     build:
       dockerfile: ../Dockerfile
       context: ./shell
+
+    depends_on:
+      - runtime
     volumes:
       - ./shell:/app
       - static:/static

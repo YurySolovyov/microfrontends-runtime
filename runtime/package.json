@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "type": "module",
+  "name": "microfrontends-runtime-runtime",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "scripts": {
+    "build": "node build.js --mode build",
+    "start": "node build.js --mode watch"
+  },
+  "devDependencies": {
+    "esbuild": "0.23.1"
+  }
+}

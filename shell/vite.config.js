@@ -3,14 +3,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
-const externals = [
-  'react',
-  'react/jsx-runtime',
-  'react/jsx-dev-runtime',
-  'react-dom',
-  'react-dom/client',
-];
-
 export default defineConfig({
   plugins: [
     nodeResolve({
@@ -25,23 +17,27 @@ export default defineConfig({
     transformer: 'lightningcss',
   },
   build: {
-    minify: false,
     cssCodeSplit: true,
+    emptyOutDir: false,
+
     rollupOptions: {
+      external: [
+        'react',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+        'react-dom',
+        'react-dom/client',
+      ],
       output: {
         minifyInternalExports: false,
         chunkFileNames: '[name].js',
         assetFileNames: '[name].[ext]',
-        manualChunks: {
-          vendor: externals,
-        },
       },
     },
 
     target: 'es2022',
     modulePreload: { polyfill: false },
     outDir: '/static',
-    emptyOutDir: true,
 
     lib: {
       entry: {
