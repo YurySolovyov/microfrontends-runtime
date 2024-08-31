@@ -11,6 +11,6 @@
     "start": "node build.js --mode watch"
   },
   "devDependencies": {
-    "esbuild": "0.23.1"
+    "rolldown": "^0.12.2"
   }
 }
