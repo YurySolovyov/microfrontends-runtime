@@ -7,10 +7,12 @@
     "react-dom": "^18.3.1"
   },
   "scripts": {
-    "build": "rolldown -c",
+    "build": "node build.js --mode build",
     "start": "node build.js --mode watch"
   },
   "devDependencies": {
-    "rolldown": "0.13.0"
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "rollup": "^4.21.2"
   }
 }
