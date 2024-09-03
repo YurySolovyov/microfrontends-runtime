@@ -7,10 +7,10 @@
     "react-dom": "^18.3.1"
   },
   "scripts": {
-    "build": "node build.js --mode build",
+    "build": "rolldown -c",
     "start": "node build.js --mode watch"
   },
   "devDependencies": {
-    "rolldown": "^0.12.2"
+    "rolldown": "0.13.0"
   }
 }

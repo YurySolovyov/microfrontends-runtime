@@ -1,1 +1,3 @@
-export * from 'react';
+import { useMemo } from 'react';
+
+export { useMemo };
