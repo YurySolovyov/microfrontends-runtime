@@ -1,59 +1,39 @@
-import { parseArgs } from 'node:util';
-import { rollup, watch } from 'rollup';
+import fs from 'node:fs';
+import { defineConfig } from 'rollup';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 
-const { values: { mode = 'watch' } = {} } = parseArgs({
-  args: process.argv.slice(2),
-  options: {
-    mode: { type: 'string' }
-  }
-});
+fs.rmSync('./out', { force: true, recursive: true });
 
-const output = {
-  chunkFileNames: '[name].js',
-  entryFileNames: '[name].js',
-  assetFileNames: '[name].[ext]',
-  dir: '/static/vendor',
-  format: 'esm',
-  esModule: false,
-  preserveModules: true,
-  interop: "esModule",
-};
-
-const inputs = [
-  'runtime/react.js',
-  'runtime/react-dom.js',
-  'runtime/react-dom-client.js',
-  'runtime/jsx-runtime.js',
-  'runtime/jsx-dev-runtime.js',
-];
-
-const options = {
+export default defineConfig({
+  input: [
+    'runtime/react.js',
+    'runtime/react-dom.js',
+    'runtime/react-dom-client.js',
+    'runtime/jsx-runtime.js',
+    'runtime/jsx-dev-runtime.js',
+  ],
   plugins: [
     nodeResolve(),
-    commonjs(),
+    commonjs({
+      defaultIsModuleExports: true,
+      requireReturnsDefault: true,
+    }),
+    // TODO: plugin https://rollupjs.org/plugin-development/#this-getmoduleinfo
   ],
-  logLevel: 'debug',
   preserveEntrySignatures: 'strict',
-}
-
-if (mode === 'watch') {
-  const watcher = watch(options);
-
-  watcher.on('event', (event) => {
-    if (event.code === 'ERROR') {
-      console.log(event.error);
-    }
-  });
-} else {
-  const bundle = await rollup(
-    inputs.map((input) => ({ ...options, input })),
-  );
-
-  await bundle.write(output);
-  await bundle.close();
-}
+  output: {
+    chunkFileNames: '[name].js',
+    entryFileNames: '[name].js',
+    assetFileNames: '[name].[ext]',
+    // dir: '/static/vendor',
+    dir: './out',
+    format: 'esm',
+    esModule: false,
+    interop: "esModule",
+    minifyInternalExports: true,
+  },
+});
 
 // TODO: use when manualChunks are implemented?
 // const runtimeIds = [
