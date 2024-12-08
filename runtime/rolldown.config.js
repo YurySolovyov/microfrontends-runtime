@@ -1,63 +1,64 @@
 import fs from 'node:fs';
-import crypto from 'node:crypto';
 
 import { defineConfig } from 'rolldown';
 
 fs.rmSync('./out', { force: true, recursive: true });
 
 const runtimePlugin = ({ ids }) => {
+  const vendorize = (value) => `vendor-${value.replaceAll('/', '-')}`;
+
   const mapping = {
-    idToHash: new Map(),
-    hashToId: new Map(),
+    idToDash: new Map(),
+    dashToId: new Map(),
   };
 
   for (const id of ids) {
-    const hash = `mod_${crypto.hash('sha256', id)}`;
-    mapping.idToHash.set(id, hash);
-    mapping.hashToId.set(hash, id);
+    const dash = vendorize(id);
+    mapping.idToDash.set(id, dash);
+    mapping.dashToId.set(dash, id);
   }
 
   return {
     name: 'vendor-runtime-plugin',
-    async resolveId(id, importer) {
-      if (id === 'vendor') {
-        return id;
-      }
+    options(options) {
+      const input = options.input || [];
 
-      if (importer === 'vendor') {
-        return mapping.idToHash.get(id);
+      const virtualIds = ids.map((id) => vendorize(id));
+      return {
+        ...options,
+        input: [].concat(input).concat(virtualIds),
+      };
+    },
+    async resolveId(id) {
+      const dashed = mapping.dashToId.get(id);
+      if (dashed) {
+        console.log('resolved:', id, 'to:', dashed);
+        return id;
       }
 
       return null;
     },
 
     async load(id) {
-      if (id === 'vendor') {
-        return ids.map((moduleId) => `export * from '${moduleId}';`).join('\n');
-      }
+      if (id.startsWith('vendor-')) {
+        const mapped = mapping.dashToId.get(id);
+        console.log('mapped:', id, 'to', mapped);
 
-      const mapped = mapping.hashToId.get(id);
-      if (mapped) {
-        return `export * from '${mapped}';\n`;
-      }
+        const resolved = await this.resolve(mapped);
+        console.log('resolved:', mapped, 'to', resolved.id);
 
-      return null;
-    },
-    renderStart(...rest) {
-      console.log(rest);
+        return this.load({ id: resolved.id, resolveDependencies: true });
+      }
 
       return null;
     },
   };
 };
 
+const runtimeIds = ['react', 'react/jsx-dev-runtime', 'react/jsx-runtime', 'react-dom', 'react-dom/client'];
+
 export default defineConfig({
-  input: 'vendor',
-  plugins: [
-    runtimePlugin({
-      ids: ['react/jsx-dev-runtime', 'react/jsx-runtime', 'react', 'react-dom', 'react-dom/client'],
-    }),
-  ],
+  plugins: [runtimePlugin({ ids: runtimeIds })],
   output: {
     chunkFileNames: '[name].js',
     entryFileNames: '[name].js',
@@ -66,12 +67,3 @@ export default defineConfig({
     format: 'esm',
   },
 });
-
-// TODO: use when manualChunks are implemented?
-// const runtimeIds = [
-//   'react',
-//   'react/jsx-dev-runtime',
-//   'react/jsx-runtime',
-//   'react-dom',
-//   'react-dom/client',
-// ];
