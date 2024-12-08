@@ -2,20 +2,23 @@ import fs from 'node:fs';
 
 import { defineConfig } from 'rolldown';
 
-fs.rmSync('./out', { force: true, recursive: true });
+const out = '/static/vendor';
+// const out = './out';
+
+fs.rmSync(out, { force: true, recursive: true });
 
 const runtimePlugin = ({ ids }) => {
   const vendorize = (value) => `vendor-${value.replaceAll('/', '-')}`;
 
   const mapping = {
-    idToDash: new Map(),
-    dashToId: new Map(),
+    idToVendor: new Map(),
+    vendorToId: new Map(),
   };
 
   for (const id of ids) {
-    const dash = vendorize(id);
-    mapping.idToDash.set(id, dash);
-    mapping.dashToId.set(dash, id);
+    const dashed = vendorize(id);
+    mapping.idToVendor.set(id, dashed);
+    mapping.vendorToId.set(dashed, id);
   }
 
   return {
@@ -29,10 +32,8 @@ const runtimePlugin = ({ ids }) => {
         input: [].concat(input).concat(virtualIds),
       };
     },
-    async resolveId(id) {
-      const dashed = mapping.dashToId.get(id);
-      if (dashed) {
-        console.log('resolved:', id, 'to:', dashed);
+    resolveId(id) {
+      if (mapping.vendorToId.has(id)) {
         return id;
       }
 
@@ -41,13 +42,13 @@ const runtimePlugin = ({ ids }) => {
 
     async load(id) {
       if (id.startsWith('vendor-')) {
-        const mapped = mapping.dashToId.get(id);
-        console.log('mapped:', id, 'to', mapped);
+        const mapped = mapping.vendorToId.get(id);
 
-        const resolved = await this.resolve(mapped);
-        console.log('resolved:', mapped, 'to', resolved.id);
+        // H A C K
+        const mod = await import(mapped);
+        // H A C K
 
-        return this.load({ id: resolved.id, resolveDependencies: true });
+        return `export {${Object.keys(mod).join(',')}} from '${mapped}';`;
       }
 
       return null;
@@ -59,11 +60,14 @@ const runtimeIds = ['react', 'react/jsx-dev-runtime', 'react/jsx-runtime', 'reac
 
 export default defineConfig({
   plugins: [runtimePlugin({ ids: runtimeIds })],
+  define: {
+    'process.env.NODE_ENV': '"development"',
+  },
   output: {
     chunkFileNames: '[name].js',
     entryFileNames: '[name].js',
     assetFileNames: '[name].[ext]',
-    dir: './out',
+    dir: out,
     format: 'esm',
   },
 });
